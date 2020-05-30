@@ -93,8 +93,8 @@ const Board: FC<BoardProps> = (props) => {
     <Fragment>
       <p>{levelName}</p>
       <BoardWrapper>
-        {hasWon && <BoardStop>Tu as gagné !</BoardStop>}
-        {hasLost && <BoardStop>Tu as perdu !</BoardStop>}
+        {hasWon && <BoardStop>You won !</BoardStop>}
+        {hasLost && <BoardStop>You lost !</BoardStop>}
         <MapGame>
           {gameMap.lines.map((line, lineIndex) => (
             <Line key={lineIndex}>
