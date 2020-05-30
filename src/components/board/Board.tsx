@@ -1,7 +1,15 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { BoardStop, BoardWrapper, Cell, Line, MapGame } from './Board.styles';
+import VirtualKeys from '../virtualKeys/VirtualKeys';
+import {
+  BoardStop,
+  BoardWrapper,
+  Cell,
+  LevelName,
+  Line,
+  MapGame
+} from './Board.styles';
 import {
   GameBoard,
   getCurrentPosition,
@@ -42,38 +50,29 @@ const Board: FC<BoardProps> = (props) => {
   const isBoardFinised = hasLost || hasWon;
   const position = getCurrentPosition(gameMap);
 
-  useHotkeys(
-    "left",
-    () => {
-      updateBoard({ ...board, gameMap: moveToLeft(board) });
-    },
-    { filter: () => !isBoardFinised },
-    [board]
-  );
+  const goToLeft = () => {
+    updateBoard({ ...board, gameMap: moveToLeft(board) });
+  };
 
-  useHotkeys(
-    "right",
-    () => {
-      updateBoard({ ...board, gameMap: moveToRight(board) });
-    },
-    [board]
-  );
+  const goToRight = () => {
+    updateBoard({ ...board, gameMap: moveToRight(board) });
+  };
 
-  useHotkeys(
-    "up",
-    () => {
-      updateBoard({ ...board, gameMap: moveToUp(board) });
-    },
-    [board]
-  );
+  const goToUp = () => {
+    updateBoard({ ...board, gameMap: moveToUp(board) });
+  };
 
-  useHotkeys(
-    "down",
-    () => {
-      updateBoard({ ...board, gameMap: moveToDown(board) });
-    },
-    [board]
-  );
+  const goToDown = () => {
+    updateBoard({ ...board, gameMap: moveToDown(board) });
+  };
+
+  useHotkeys("left", goToLeft, [board]);
+
+  useHotkeys("right", goToRight, [board]);
+
+  useHotkeys("up", goToUp, [board]);
+
+  useHotkeys("down", goToDown, [board]);
 
   useEffect(() => {
     const isOnExit = isSamePosition(position, exitPosition);
@@ -91,10 +90,20 @@ const Board: FC<BoardProps> = (props) => {
 
   return (
     <Fragment>
-      <p>{levelName}</p>
+      <LevelName>{levelName}</LevelName>
       <BoardWrapper>
-        {hasWon && <BoardStop>You won !</BoardStop>}
-        {hasLost && <BoardStop>You lost !</BoardStop>}
+        {hasWon && (
+          <BoardStop>
+            <span>You won !</span>
+            <button onClick={onSuccessClick}>Next level ></button>
+          </BoardStop>
+        )}
+        {hasLost && (
+          <BoardStop>
+            <span>You lost !</span>
+            <button onClick={onRestartClick}>Retry</button>
+          </BoardStop>
+        )}
         <MapGame>
           {gameMap.lines.map((line, lineIndex) => (
             <Line key={lineIndex}>
@@ -110,8 +119,12 @@ const Board: FC<BoardProps> = (props) => {
           ))}
         </MapGame>
       </BoardWrapper>
-      {hasWon && <button onClick={onSuccessClick}>Niveau suivant</button>}
-      {hasLost && <button onClick={onRestartClick}>Réessayer</button>}
+      <VirtualKeys
+        goToDown={goToDown}
+        goToLeft={goToLeft}
+        goToRight={goToRight}
+        goToUp={goToUp}
+      />
     </Fragment>
   );
 };

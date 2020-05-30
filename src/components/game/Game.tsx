@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import Board from '../board/Board';
 import gameConfig from './Game.config';
-import { Wrapper } from './Game.styles';
+import { BackgroundWrapper, GlobalStyle, Wrapper } from './Game.styles';
 
 const Game = () => {
   const [levelNumber, setLevelNumber] = useState<number>(0);
@@ -28,18 +28,24 @@ const Game = () => {
   };
 
   return (
-    <Wrapper>
-      {loading ? (
-        <div>loading...</div>
-      ) : (
-        <Board
-          {...level}
-          onSuccessClick={nextLevel}
-          onRestartClick={restartLevel}
-          id={levelNumber}
-        />
-      )}
-    </Wrapper>
+    <Fragment>
+      <BackgroundWrapper />
+      <Wrapper>
+        <GlobalStyle />
+        {loading ? (
+          <div>loading...</div>
+        ) : (
+          <Fragment>
+            <Board
+              {...level}
+              onSuccessClick={nextLevel}
+              onRestartClick={restartLevel}
+              id={levelNumber}
+            />
+          </Fragment>
+        )}
+      </Wrapper>
+    </Fragment>
   );
 };
 

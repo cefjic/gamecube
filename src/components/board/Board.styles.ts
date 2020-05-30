@@ -1,25 +1,41 @@
 import styled, { css, keyframes } from 'styled-components';
 
+import colors from '../../utils/colors';
 import { CellProps } from './Board.utils';
 
 const moveTo = keyframes`
   from {
-    background: lightGrey;
+
+    transform: scale(0.8);
+    background: ${colors.lightGrey};
   }
   to {
-    background: grey;
+    transform: scale(1);
+    background: ${colors.grey};
   }
 `;
 
 const trapBegin = keyframes`
   0% {
-    background: red;
+    background: ${colors.red};
   }
   50% {
-    background: red;
+    background: ${colors.red};
   }
   100% {
-    background: grey;
+    background: ${colors.grey};
+  }
+`;
+
+const exitAnimation = keyframes`
+  0% {
+    border-radius: 10%;
+  }
+  50% {
+    border-radius: 50%;
+  }
+  100% {
+    border-radius: 10%;
   }
 `;
 
@@ -29,10 +45,12 @@ interface CellDivProps extends CellProps {
 }
 
 export const Cell = styled.div<CellDivProps>`
-  width: 20px;
-  height: 20px;
-  background: grey;
+  width: 30px;
+  height: 30px;
+  background: ${colors.grey};
   margin: 2px;
+  transition: transform 0.2s;
+  border-radius: 10%;
 
   ${({ isWentHere }) =>
     isWentHere &&
@@ -44,14 +62,14 @@ export const Cell = styled.div<CellDivProps>`
     isWentHere &&
     isFinish &&
     css`
-      background: black;
+      background: ${colors.darkGrey};
       animation: unset;
     `}
 
   ${({ isTrap, trapShowingTime }) =>
     isTrap &&
     css`
-      background: red;
+      background: ${colors.red};
       animation: ${trapBegin} ${trapShowingTime}s linear normal forwards;
     `}
 
@@ -60,29 +78,29 @@ export const Cell = styled.div<CellDivProps>`
     isTrap &&
     isFinish &&
     css`
-      background: red;
+      background: ${colors.red};
       animation: unset;
     `}
 
   ${({ isUser }) =>
     isUser &&
     css`
-      background: orange;
+      background: ${colors.lightGrey};
       animation: unset;
     `}
 
-  ${({ isExit: isOutside }) =>
-    isOutside &&
+  ${({ isExit }) =>
+    isExit &&
     css`
-      background: gold;
-      animation: unset;
+      background: ${colors.lightGrey};
+      animation: ${exitAnimation} 5s linear infinite;
     `}
 
   ${({ isTrap, isUser }) =>
     isTrap &&
     isUser &&
     css`
-      background: purple;
+      background: ${colors.purple};
       animation: unset;
     `}
   
@@ -101,7 +119,9 @@ export const MapGame = styled.div`
 export const BoardWrapper = styled.div`
   position: relative;
   display: inline-block;
-  border: 1px solid grey;
+  border: 4px solid ${colors.lightGrey};
+  border-radius: 10px;
+  padding: 1px;
 `;
 
 export const BoardStop = styled.div`
@@ -110,8 +130,16 @@ export const BoardStop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.6);
+  z-indx: 2;
+  background: rgba(255, 255, 255, 0.8);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+export const LevelName = styled.p`
+  font-size: 24px;
+  color: ${colors.darkGrey};
+  margin: 0 0 24px;
 `;
