@@ -1,5 +1,11 @@
 import { BoardProps } from './Board';
 
+export enum Difficulty {
+  EASY = "easy",
+  MEDIUM = "medium",
+  HARD = "hard",
+}
+
 export interface PositionProps {
   width: number;
   height: number;
@@ -21,10 +27,12 @@ export interface GameMap {
 }
 
 export interface GameBoard {
+  difficulty: Difficulty;
   levelName: string;
   gameMap: GameMap;
   hasWon: boolean;
   hasLost: boolean;
+  needRestart: boolean;
   width: number;
   height: number;
   trapsPositions: PositionProps[];
@@ -276,6 +284,7 @@ export const getInitialData = ({
   startPosition,
   trapsPositions,
   name,
+  difficulty,
 }: BoardProps) => ({
   levelName: name,
   gameMap: initMap(
@@ -287,7 +296,9 @@ export const getInitialData = ({
   ),
   hasWon: false,
   hasLost: false,
+  needRestart: false,
   width: boardWidth,
   height: boardHeight,
   trapsPositions,
+  difficulty,
 });

@@ -1,11 +1,19 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import Board from '../board/Board';
-import { generateTraps, PositionProps } from '../board/Board.utils';
-import gameConfig from './Game.config';
+import { Difficulty, generateTraps, PositionProps } from '../board/Board.utils';
+import {
+  EASY_LEVEL,
+  HARD_LEVEL,
+  MEDIUM_LEVEL,
+  NB_EASY_LEVELS,
+  NB_LIFES,
+  NB_MEDIUM_LEVELS
+} from './Game.config';
 import { BackgroundWrapper, GlobalStyle, Wrapper } from './Game.styles';
 
 export interface LevelConfigProps {
+  difficulty: Difficulty;
   startPosition: PositionProps;
   exitPosition: PositionProps;
   boardWidth: number;
@@ -41,33 +49,45 @@ const buildLevel = (level: LevelConfigProps, levelNumber: number) => {
   };
 };
 
+const getLevelConfig = (level: number) =>
+  level <= NB_EASY_LEVELS
+    ? EASY_LEVEL
+    : level <= NB_MEDIUM_LEVELS
+    ? MEDIUM_LEVEL
+    : HARD_LEVEL;
+
 const Game = () => {
   const [levelNumber, setLevelNumber] = useState<number>(0);
+  const [lifes, setLifes] = useState<number>(NB_LIFES);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [level, setLevel] = useState<LevelProps>(
-    buildLevel(gameConfig[levelNumber], levelNumber)
+    buildLevel(EASY_LEVEL, levelNumber)
   );
 
   const nextLevel = () => {
-    if (gameConfig.length - 1 > levelNumber) {
-      setLoading(true);
-      setTimeout(() => {
-        setLevelNumber(levelNumber + 1);
-        setLoading(false);
-      }, 500);
-    }
+    setLoading(true);
+    setTimeout(() => {
+      setLevelNumber(levelNumber + 1);
+      setLoading(false);
+    }, 500);
   };
 
   const restartLevel = () => {
     setLoading(true);
+    if (lifes > 1) {
+      setLifes(lifes - 1);
+    } else {
+      setLifes(NB_LIFES);
+      setLevelNumber(0);
+    }
     setTimeout(() => {
       setLoading(false);
     }, 500);
   };
 
   useEffect(() => {
-    setLevel(buildLevel(gameConfig[levelNumber], levelNumber));
+    setLevel(buildLevel(getLevelConfig(levelNumber), levelNumber));
   }, [levelNumber]);
 
   return (
@@ -81,6 +101,7 @@ const Game = () => {
           <Fragment>
             <Board
               {...level}
+              nbLifes={lifes}
               id={levelNumber}
               onSuccessClick={nextLevel}
               onRestartClick={restartLevel}

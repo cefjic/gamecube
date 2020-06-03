@@ -4,6 +4,7 @@ import { ReactSVG } from 'react-svg';
 
 import Bomb from '../../assets/icons/bomb.svg';
 import { LevelProps } from '../game/Game';
+import Lifes from '../lifes/Lifes';
 import VirtualKeys from '../virtualKeys/VirtualKeys';
 import {
   BoardStop,
@@ -28,6 +29,7 @@ import {
 
 export interface BoardProps extends LevelProps {
   id: number;
+  nbLifes: number;
   onSuccessClick(): void;
   onRestartClick(): void;
 }
@@ -37,11 +39,20 @@ const Board: FC<BoardProps> = (props) => {
 
   const {
     exitPosition,
+    nbLifes,
     trapShowingTime,
     onSuccessClick,
     onRestartClick,
   } = props;
-  const { gameMap, hasWon, hasLost, levelName, trapsPositions } = board;
+  const {
+    gameMap,
+    hasWon,
+    hasLost,
+    levelName,
+    trapsPositions,
+    difficulty,
+    needRestart,
+  } = board;
   const isBoardFinised = hasLost || hasWon;
   const position = getCurrentPosition(gameMap);
 
@@ -79,13 +90,15 @@ const Board: FC<BoardProps> = (props) => {
   useEffect(() => {
     const isOnTrap = isInPositions(position, trapsPositions);
     if (isOnTrap && !hasLost) {
-      updateBoard({ ...board, hasLost: true });
+      updateBoard({ ...board, hasLost: true, needRestart: nbLifes === 1 });
     }
-  }, [position, trapsPositions, hasLost, board]);
+  }, [position, trapsPositions, hasLost, board, nbLifes]);
 
   return (
     <Fragment>
-      <LevelName>{levelName}</LevelName>
+      <LevelName>
+        {levelName} - {difficulty}
+      </LevelName>
       <BoardWrapper>
         {hasWon && (
           <BoardStop>
@@ -93,10 +106,16 @@ const Board: FC<BoardProps> = (props) => {
             <Button onClick={onSuccessClick}>Next level</Button>
           </BoardStop>
         )}
-        {hasLost && (
+        {hasLost && !needRestart && (
           <BoardStop>
-            <span>Oh no !</span>
+            <span>You can do it !</span>
             <Button onClick={onRestartClick}>Retry</Button>
+          </BoardStop>
+        )}
+        {hasLost && needRestart && (
+          <BoardStop>
+            <span>You will do better next time</span>
+            <Button onClick={onRestartClick}>Retry from scratch</Button>
           </BoardStop>
         )}
         <MapGame>
@@ -116,6 +135,7 @@ const Board: FC<BoardProps> = (props) => {
           ))}
         </MapGame>
       </BoardWrapper>
+      <Lifes nbLifes={hasLost && needRestart ? nbLifes - 1 : nbLifes} />
       <VirtualKeys
         goToDown={goToDown}
         goToLeft={goToLeft}
