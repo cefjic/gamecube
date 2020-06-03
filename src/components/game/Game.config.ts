@@ -1,83 +1,48 @@
-export default [
-  {
-    name: "Tutoriel",
-    startPosition: { width: 0, height: 5 },
-    exitPosition: { width: 5, height: 5 },
-    trapsPositions: [],
-    boardWidth: 11,
-    boardHeight: 11,
-    trapShowingTime: 2,
-  },
-  {
-    name: "Level 1",
-    startPosition: { width: 0, height: 5 },
-    exitPosition: { width: 10, height: 5 },
-    trapsPositions: [
-      { width: 2, height: 2 },
-      { width: 2, height: 3 },
-      { width: 2, height: 4 },
-      { width: 2, height: 5 },
-      { width: 2, height: 6 },
-      { width: 2, height: 7 },
-      { width: 2, height: 8 },
-      { width: 5, height: 0 },
-      { width: 5, height: 1 },
-      { width: 5, height: 2 },
-      { width: 5, height: 3 },
-      { width: 5, height: 7 },
-      { width: 5, height: 8 },
-      { width: 5, height: 9 },
-      { width: 5, height: 10 },
-      { width: 8, height: 2 },
-      { width: 8, height: 3 },
-      { width: 8, height: 4 },
-      { width: 8, height: 5 },
-      { width: 8, height: 6 },
-      { width: 8, height: 7 },
-      { width: 8, height: 8 },
-    ],
-    boardWidth: 11,
-    boardHeight: 11,
-    trapShowingTime: 2,
-  },
-  {
-    name: "Level 2",
-    startPosition: { width: 0, height: 0 },
-    exitPosition: { width: 10, height: 10 },
-    trapsPositions: [
-      { width: 0, height: 2 },
-      { width: 1, height: 2 },
-      { width: 2, height: 2 },
-      { width: 4, height: 2 },
-      { width: 5, height: 2 },
-      { width: 6, height: 2 },
-      { width: 7, height: 2 },
-      { width: 8, height: 2 },
-      { width: 9, height: 2 },
-      { width: 10, height: 2 },
-      { width: 0, height: 5 },
-      { width: 1, height: 5 },
-      { width: 2, height: 5 },
-      { width: 3, height: 5 },
-      { width: 4, height: 5 },
-      { width: 5, height: 5 },
-      { width: 6, height: 5 },
-      { width: 7, height: 5 },
-      { width: 8, height: 5 },
-      { width: 10, height: 5 },
-      { width: 0, height: 8 },
-      { width: 1, height: 8 },
-      { width: 2, height: 8 },
-      { width: 3, height: 8 },
-      { width: 4, height: 8 },
-      { width: 6, height: 8 },
-      { width: 7, height: 8 },
-      { width: 8, height: 8 },
-      { width: 9, height: 8 },
-      { width: 10, height: 8 },
-    ],
-    boardWidth: 11,
-    boardHeight: 11,
-    trapShowingTime: 3,
-  },
-];
+import { LevelConfigProps } from './Game';
+
+const EASY_LEVEL: LevelConfigProps = {
+  startPosition: { width: 0, height: 4 },
+  exitPosition: { width: 8, height: 4 },
+  boardWidth: 9,
+  boardHeight: 9,
+  trapShowingTime: 2,
+  trapsCount: 15,
+};
+
+const MEDIUM_LEVEL: LevelConfigProps = {
+  startPosition: { width: 0, height: 5 },
+  exitPosition: { width: 10, height: 5 },
+  boardWidth: 11,
+  boardHeight: 11,
+  trapShowingTime: 3,
+  trapsCount: 35,
+};
+
+const HARD_LEVEL: LevelConfigProps = {
+  startPosition: { width: 0, height: 6 },
+  exitPosition: { width: 20, height: 6 },
+  boardWidth: 21,
+  boardHeight: 13,
+  trapShowingTime: 3.5,
+  trapsCount: 90,
+};
+
+const nbEasy = 5;
+const nbMedium = 30;
+const nbHard = 30;
+
+const config = () => {
+  const easyLevels = Array.from({ length: nbEasy }, (_, k) => k + 1).map(
+    () => EASY_LEVEL
+  );
+  const mediumLevels = Array.from({ length: nbMedium }, (_, k) => k + 1).map(
+    () => MEDIUM_LEVEL
+  );
+  const hardLevels = Array.from({ length: nbHard }, (_, k) => k + 1).map(
+    () => HARD_LEVEL
+  );
+
+  return [...easyLevels, ...mediumLevels, ...hardLevels];
+};
+
+export default config();

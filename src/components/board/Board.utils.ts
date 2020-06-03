@@ -27,6 +27,7 @@ export interface GameBoard {
   hasLost: boolean;
   width: number;
   height: number;
+  trapsPositions: PositionProps[];
 }
 
 export const isInPositions = (position: PositionProps, list: PositionProps[]) =>
@@ -34,6 +35,82 @@ export const isInPositions = (position: PositionProps, list: PositionProps[]) =>
 
 export const isSamePosition = (pos1: PositionProps, pos2: PositionProps) =>
   pos1.width === pos2.width && pos1.height === pos2.height;
+
+export const generatePositionCell = (max: number) =>
+  Math.round(Math.random() * max);
+
+export const generateNewPosition = (
+  maxWidth: number,
+  maxHeight: number,
+  othersPositions: PositionProps[]
+): PositionProps => {
+  const newPosition: PositionProps = {
+    width: generatePositionCell(maxWidth - 1),
+    height: generatePositionCell(maxHeight - 1),
+  };
+
+  return !isInPositions(newPosition, othersPositions)
+    ? newPosition
+    : generateNewPosition(maxWidth, maxHeight, othersPositions);
+};
+
+export const isExitAccessible = (
+  boardWidth: number,
+  boardHeight: number,
+  startPosition: PositionProps,
+  exitPosition: PositionProps,
+  trapsPositions: PositionProps[]
+) => {
+  let accessiblePositions: PositionProps[] = [];
+
+  const positionIsClean = (position: PositionProps) =>
+    canMove(false, false, boardWidth, boardHeight, position) &&
+    !isInPositions(position, trapsPositions) &&
+    !isInPositions(position, accessiblePositions);
+
+  const findAsidePositions = (position: PositionProps) => {
+    const { width, height } = position;
+
+    const newPositions: PositionProps[] = [
+      { width: width - 1, height },
+      { width: width + 1, height },
+      { width, height: height - 1 },
+      { width, height: height + 1 },
+    ].filter(positionIsClean);
+
+    accessiblePositions = [...accessiblePositions, ...newPositions];
+
+    newPositions.map((newPos) => findAsidePositions(newPos));
+  };
+
+  findAsidePositions(startPosition);
+
+  return isInPositions(exitPosition, accessiblePositions);
+};
+
+export const generateTraps = (
+  nbTraps: number,
+  width: number,
+  height: number,
+  startPosition: PositionProps,
+  exitPosition: PositionProps
+): PositionProps[] => {
+  const traps: PositionProps[] = [];
+
+  Array.from({ length: nbTraps }, (_, k) => k + 1).forEach(() => {
+    traps.push(
+      generateNewPosition(width, height, [
+        ...traps,
+        startPosition,
+        exitPosition,
+      ])
+    );
+  });
+
+  return isExitAccessible(width, height, startPosition, exitPosition, traps)
+    ? traps
+    : generateTraps(nbTraps, width, height, startPosition, exitPosition);
+};
 
 export const initMap = (
   width: number,
@@ -77,10 +154,12 @@ export const initMap = (
 };
 
 export const canMove = (
-  board: GameBoard,
+  hasWon: boolean,
+  hasLost: boolean,
+  boardWidth: number,
+  boardHeight: number,
   { width, height }: PositionProps
 ): boolean => {
-  const { hasWon, hasLost, width: boardWidth, height: boardHeight } = board;
   if (
     width >= 0 &&
     width < boardWidth &&
@@ -125,8 +204,8 @@ export const moveToPosition = (
   oldPosition: PositionProps,
   newPosition: PositionProps
 ) => {
-  let { gameMap } = board;
-  if (canMove(board, newPosition)) {
+  let { gameMap, hasWon, hasLost, width, height } = board;
+  if (canMove(hasWon, hasLost, width, height, newPosition)) {
     const oldCell = getCell(gameMap, oldPosition);
     const newCell = getCell(gameMap, newPosition);
 
@@ -210,4 +289,5 @@ export const getInitialData = ({
   hasLost: false,
   width: boardWidth,
   height: boardHeight,
+  trapsPositions,
 });

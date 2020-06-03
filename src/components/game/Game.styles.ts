@@ -10,7 +10,17 @@ export const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     position: relative;
     max-width: 100vw;
+    min-height: 100vh;
     overflow: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+  }
+
+  button {
+    font-family: "Varela Round", sans-serif;
   }
 `;
 
@@ -39,7 +49,6 @@ export const Wrapper = styled.div`
   width: 100%;
   max-width: 960px;
   margin: auto;
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;

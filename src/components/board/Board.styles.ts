@@ -15,27 +15,56 @@ const moveTo = keyframes`
   }
 `;
 
+const moveFrom = keyframes`
+  from {
+    transform: scale(1.05);
+    background: ${colors.grey};
+  }
+  to {
+    transform: scale(1);
+    background: ${colors.lightGrey};
+  }
+`;
+
 const trapBegin = keyframes`
   0% {
-    background: ${colors.red};
+    background-color: ${colors.red};
   }
   50% {
-    background: ${colors.red};
+    background-color: ${colors.red};
   }
   100% {
-    background: ${colors.grey};
+    background-color: ${colors.grey};
+  }
+`;
+
+const bombBegin = keyframes`
+  0% {
+      opacity: 1;
+  }
+  50% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0;
   }
 `;
 
 const exitAnimation = keyframes`
   0% {
     border-radius: 10%;
+    transform: rotate(0deg);
+    opacity: 1;
   }
   50% {
     border-radius: 50%;
+    transform: rotate(45deg);
+    opacity: 0.8;
   }
   100% {
     border-radius: 10%;
+    transform: rotate(90deg);
+    opacity: 1;
   }
 `;
 
@@ -71,6 +100,17 @@ export const Cell = styled.div<CellDivProps>`
     css`
       background: ${colors.red};
       animation: ${trapBegin} ${trapShowingTime}s linear normal forwards;
+
+      > div {
+        opacity: 0;
+        animation: ${bombBegin} ${trapShowingTime}s linear normal forwards;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        padding: 5px;
+      }
     `}
 
 
@@ -80,20 +120,24 @@ export const Cell = styled.div<CellDivProps>`
     css`
       background: ${colors.red};
       animation: unset;
+
+      > div {
+        animation: unset;
+      }
     `}
 
   ${({ isUser }) =>
     isUser &&
     css`
+      animation: ${moveFrom} 0.1s linear normal forwards;
       background: ${colors.lightGrey};
-      animation: unset;
     `}
 
   ${({ isExit }) =>
     isExit &&
     css`
       background: ${colors.lightGrey};
-      animation: ${exitAnimation} 5s linear infinite;
+      animation: ${exitAnimation} 4s linear infinite;
     `}
 
   ${({ isTrap, isUser }) =>
@@ -122,6 +166,7 @@ export const BoardWrapper = styled.div`
   border: 4px solid ${colors.lightGrey};
   border-radius: 10px;
   padding: 1px;
+  overflow: hidden;
 `;
 
 export const BoardStop = styled.div`
@@ -141,5 +186,30 @@ export const BoardStop = styled.div`
 export const LevelName = styled.p`
   font-size: 24px;
   color: ${colors.darkGrey};
-  margin: 0 0 24px;
+  margin: 0 0 8px;
+  background: #f4f5f6;
+  box-shadow: 0px 0px 40px #f4f5f6;
+  padding: 4px;
+`;
+
+export const Button = styled.button`
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid #cfd8dc;
+  font-size: 16px;
+  border-radius: 10px;
+  margin-top: 24px;
+  cursor: pointer;
+  position: relative;
+  z-index: 99;
+
+  :hover {
+    background: #f9f9f9;
+  }
+
+  :hover,
+  :active,
+  :focus {
+    outline: none;
+  }
 `;

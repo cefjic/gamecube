@@ -1,10 +1,14 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { ReactSVG } from 'react-svg';
 
+import Bomb from '../../assets/icons/bomb.svg';
+import { LevelProps } from '../game/Game';
 import VirtualKeys from '../virtualKeys/VirtualKeys';
 import {
   BoardStop,
   BoardWrapper,
+  Button,
   Cell,
   LevelName,
   Line,
@@ -19,19 +23,11 @@ import {
   moveToDown,
   moveToLeft,
   moveToRight,
-  moveToUp,
-  PositionProps
+  moveToUp
 } from './Board.utils';
 
-export interface BoardProps {
+export interface BoardProps extends LevelProps {
   id: number;
-  name: string;
-  startPosition: PositionProps;
-  exitPosition: PositionProps;
-  trapsPositions: PositionProps[];
-  boardWidth: number;
-  boardHeight: number;
-  trapShowingTime: number;
   onSuccessClick(): void;
   onRestartClick(): void;
 }
@@ -42,11 +38,10 @@ const Board: FC<BoardProps> = (props) => {
   const {
     exitPosition,
     trapShowingTime,
-    trapsPositions,
     onSuccessClick,
     onRestartClick,
   } = props;
-  const { gameMap, hasWon, hasLost, levelName } = board;
+  const { gameMap, hasWon, hasLost, levelName, trapsPositions } = board;
   const isBoardFinised = hasLost || hasWon;
   const position = getCurrentPosition(gameMap);
 
@@ -94,14 +89,14 @@ const Board: FC<BoardProps> = (props) => {
       <BoardWrapper>
         {hasWon && (
           <BoardStop>
-            <span>You won !</span>
-            <button onClick={onSuccessClick}>Next level ></button>
+            <span>You win !</span>
+            <Button onClick={onSuccessClick}>Next level</Button>
           </BoardStop>
         )}
         {hasLost && (
           <BoardStop>
-            <span>You lost !</span>
-            <button onClick={onRestartClick}>Retry</button>
+            <span>Oh no !</span>
+            <Button onClick={onRestartClick}>Retry</Button>
           </BoardStop>
         )}
         <MapGame>
@@ -113,7 +108,9 @@ const Board: FC<BoardProps> = (props) => {
                   key={cellIndex}
                   isFinish={isBoardFinised}
                   trapShowingTime={trapShowingTime}
-                />
+                >
+                  {cell.isTrap && <ReactSVG src={Bomb} />}
+                </Cell>
               ))}
             </Line>
           ))}
