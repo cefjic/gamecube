@@ -4,13 +4,20 @@ import Board from '../board/Board';
 import { Difficulty, generateTraps, PositionProps } from '../board/Board.utils';
 import {
   EASY_LEVEL,
+  EXTREME_LEVEL,
   HARD_LEVEL,
   MEDIUM_LEVEL,
   NB_EASY_LEVELS,
+  NB_HARD_LEVELS,
   NB_LIFES,
   NB_MEDIUM_LEVELS
 } from './Game.config';
-import { BackgroundWrapper, GlobalStyle, Wrapper } from './Game.styles';
+import {
+  BackgroundWrapper,
+  GlobalStyle,
+  Loading,
+  Wrapper
+} from './Game.styles';
 
 export interface LevelConfigProps {
   difficulty: Difficulty;
@@ -38,7 +45,7 @@ const buildLevel = (level: LevelConfigProps, levelNumber: number) => {
 
   return {
     ...level,
-    name: `Level ${levelNumber + 1}`,
+    name: `Level ${levelNumber}`,
     trapsPositions: generateTraps(
       trapsCount,
       boardWidth,
@@ -49,15 +56,19 @@ const buildLevel = (level: LevelConfigProps, levelNumber: number) => {
   };
 };
 
-const getLevelConfig = (level: number) =>
-  level <= NB_EASY_LEVELS
-    ? EASY_LEVEL
-    : level <= NB_MEDIUM_LEVELS
-    ? MEDIUM_LEVEL
-    : HARD_LEVEL;
+const getLevelConfig = (level: number) => {
+  if (level <= NB_EASY_LEVELS) {
+    return EASY_LEVEL;
+  } else if (level <= NB_EASY_LEVELS + NB_MEDIUM_LEVELS) {
+    return MEDIUM_LEVEL;
+  } else if (level <= NB_EASY_LEVELS + NB_MEDIUM_LEVELS + NB_HARD_LEVELS) {
+    return HARD_LEVEL;
+  }
+  return EXTREME_LEVEL;
+};
 
 const Game = () => {
-  const [levelNumber, setLevelNumber] = useState<number>(0);
+  const [levelNumber, setLevelNumber] = useState<number>(1);
   const [lifes, setLifes] = useState<number>(NB_LIFES);
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -96,7 +107,7 @@ const Game = () => {
       <Wrapper>
         <GlobalStyle />
         {loading ? (
-          <div>loading...</div>
+          <Loading />
         ) : (
           <Fragment>
             <Board

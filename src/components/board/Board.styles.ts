@@ -22,7 +22,7 @@ const moveFrom = keyframes`
   }
   to {
     transform: scale(1);
-    background: ${colors.lightGrey};
+    background: #7986cb;
   }
 `;
 
@@ -38,28 +38,21 @@ const trapBegin = keyframes`
   }
 `;
 
-const bombBegin = keyframes`
-  0% {
-      opacity: 1;
-  }
-  50% {
-      opacity: 1;
-  }
-  100% {
-      opacity: 0;
-  }
-`;
-
 const exitAnimation = keyframes`
   0% {
     border-radius: 10%;
     transform: rotate(0deg);
     opacity: 1;
   }
-  50% {
+  45% {
     border-radius: 50%;
+  }
+  50% {
     transform: rotate(45deg);
     opacity: 0.8;
+  }
+  55%{
+    border-radius: 50%;
   }
   100% {
     border-radius: 10%;
@@ -68,9 +61,23 @@ const exitAnimation = keyframes`
   }
 `;
 
+const moveStart = keyframes`
+  0%{
+    border-radius: 50%;
+    transform: scale(4);
+    opacity: 0;
+  }
+  100% {
+    border-radius: 10%;
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
 interface CellDivProps extends CellProps {
   isFinish: boolean;
   trapShowingTime: number;
+  isStartCell: boolean;
 }
 
 export const Cell = styled.div<CellDivProps>`
@@ -100,17 +107,6 @@ export const Cell = styled.div<CellDivProps>`
     css`
       background: ${colors.red};
       animation: ${trapBegin} ${trapShowingTime}s linear normal forwards;
-
-      > div {
-        opacity: 0;
-        animation: ${bombBegin} ${trapShowingTime}s linear normal forwards;
-      }
-
-      svg {
-        width: 20px;
-        height: 20px;
-        padding: 5px;
-      }
     `}
 
 
@@ -120,23 +116,28 @@ export const Cell = styled.div<CellDivProps>`
     css`
       background: ${colors.red};
       animation: unset;
-
-      > div {
-        animation: unset;
-      }
     `}
 
   ${({ isUser }) =>
     isUser &&
     css`
       animation: ${moveFrom} 0.1s linear normal forwards;
-      background: ${colors.lightGrey};
+      background: ${colors.purple};
+    `}
+
+  ${({ isUser, isStartCell }) =>
+    isUser &&
+    isStartCell &&
+    css`
+      animation: ${moveStart} 0.4s ease-in normal forwards;
+      background: ${colors.purple};
+      z-index: 2;
     `}
 
   ${({ isExit }) =>
     isExit &&
     css`
-      background: ${colors.lightGrey};
+      background: ${colors.teal};
       animation: ${exitAnimation} 4s linear infinite;
     `}
 
@@ -166,7 +167,6 @@ export const BoardWrapper = styled.div`
   border: 4px solid ${colors.lightGrey};
   border-radius: 10px;
   padding: 1px;
-  overflow: hidden;
 `;
 
 export const BoardStop = styled.div`

@@ -4,6 +4,7 @@ export enum Difficulty {
   EASY = "easy",
   MEDIUM = "medium",
   HARD = "hard",
+  EXTREME = "extreme",
 }
 
 export interface PositionProps {

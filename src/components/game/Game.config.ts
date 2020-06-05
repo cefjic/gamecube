@@ -23,6 +23,16 @@ export const MEDIUM_LEVEL: LevelConfigProps = {
 
 export const HARD_LEVEL: LevelConfigProps = {
   difficulty: Difficulty.HARD,
+  startPosition: { width: 0, height: 7 },
+  exitPosition: { width: 14, height: 7 },
+  boardWidth: 15,
+  boardHeight: 15,
+  trapShowingTime: 4,
+  trapsCount: 55,
+};
+
+export const EXTREME_LEVEL: LevelConfigProps = {
+  difficulty: Difficulty.EXTREME,
   startPosition: { width: 0, height: 6 },
   exitPosition: { width: 20, height: 6 },
   boardWidth: 21,
@@ -33,4 +43,5 @@ export const HARD_LEVEL: LevelConfigProps = {
 
 export const NB_EASY_LEVELS = 5;
 export const NB_MEDIUM_LEVELS = 30;
+export const NB_HARD_LEVELS = 30;
 export const NB_LIFES = 10;

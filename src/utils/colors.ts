@@ -5,6 +5,6 @@ export default {
   gold: "#fff176",
   red: "#e57373",
   darkRed: "#c62828",
-  purple: "#ba68c8",
+  purple: "#7986cb",
   teal: "#4db6ac",
 };

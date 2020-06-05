@@ -7,7 +7,7 @@ export const KeysInstructions = styled.div`
   display: flex;
   flex-wrap: wrap;
   max-width: 150px;
-  margin-top: 32px;
+  margin-top: 20px;
 `;
 
 export const Key = styled.div<{ rotate?: number }>`

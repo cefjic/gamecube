@@ -1,6 +1,7 @@
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
 
 import Background from '../../assets/images/interlaced.png';
+import colors from '../../utils/colors';
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -9,14 +10,15 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: relative;
-    max-width: 100vw;
-    min-height: 100vh;
+    max-width: 100%;
+    min-height: 100%;
     overflow: hidden;
   }
 
   #root {
     min-height: 100vh;
     display: flex;
+    overflow: hidden;
   }
 
   button {
@@ -53,4 +55,25 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+`;
+
+const LoadingAnimation = keyframes`
+  0% {
+    transform: rotate(0deg);
+    background: ${colors.teal};
+  }
+  50% {
+    background: ${colors.red};
+  }
+  100%{
+    background: ${colors.teal};
+    transform: rotate(360deg);
+  }
+`;
+
+export const Loading = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  animation: ${LoadingAnimation} 2s linear infinite;
 `;

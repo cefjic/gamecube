@@ -1,8 +1,7 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { ReactSVG } from 'react-svg';
 
-import Bomb from '../../assets/icons/bomb.svg';
+import DifficultyBar from '../difficultyBar/DifficultyBar';
 import { LevelProps } from '../game/Game';
 import Lifes from '../lifes/Lifes';
 import VirtualKeys from '../virtualKeys/VirtualKeys';
@@ -36,9 +35,11 @@ export interface BoardProps extends LevelProps {
 
 const Board: FC<BoardProps> = (props) => {
   const [board, updateBoard] = useState<GameBoard>(getInitialData(props));
+  const [hasMove, setHasMove] = useState<boolean>(false);
 
   const {
     exitPosition,
+    startPosition,
     nbLifes,
     trapShowingTime,
     onSuccessClick,
@@ -94,10 +95,17 @@ const Board: FC<BoardProps> = (props) => {
     }
   }, [position, trapsPositions, hasLost, board, nbLifes]);
 
+  useEffect(() => {
+    if (!hasMove && !isSamePosition(startPosition, position)) {
+      setHasMove(true);
+    }
+  }, [hasMove, startPosition, position]);
+
   return (
     <Fragment>
       <LevelName>
-        {levelName} - {difficulty}
+        <span>{levelName}</span>
+        <DifficultyBar difficulty={difficulty} />
       </LevelName>
       <BoardWrapper>
         {hasWon && (
@@ -127,9 +135,14 @@ const Board: FC<BoardProps> = (props) => {
                   key={cellIndex}
                   isFinish={isBoardFinised}
                   trapShowingTime={trapShowingTime}
-                >
-                  {cell.isTrap && <ReactSVG src={Bomb} />}
-                </Cell>
+                  isStartCell={
+                    !hasMove &&
+                    isSamePosition(
+                      { width: lineIndex, height: cellIndex },
+                      startPosition
+                    )
+                  }
+                />
               ))}
             </Line>
           ))}
