@@ -11,4 +11,5 @@ export default {
   lime: "#d4e157",
   orange: "#ffa726",
   deepRed: "#ef5350",
+  pink: "#f48fb1",
 };

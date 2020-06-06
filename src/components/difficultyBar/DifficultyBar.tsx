@@ -3,7 +3,7 @@ import { ReactSVG } from 'react-svg';
 
 import Skull from '../../assets/icons/skull.svg';
 import colors from '../../utils/colors';
-import { Difficulty } from '../board/Board.utils';
+import { Difficulty } from '../board/Board.interfaces';
 import { SkullWrapper, Wrapper } from './DifficultyBar.styles';
 
 interface OwnProps {
@@ -25,9 +25,9 @@ const DifficultyBar: FC<OwnProps> = ({ difficulty }) => {
   const { nbSkull, color } = getSkullConfig(difficulty);
 
   return (
-    <Wrapper>
+    <Wrapper title={`difficulty: ${difficulty}`}>
       {Array.from({ length: 4 }, (_, k) => k + 1).map((index) => (
-        <SkullWrapper isColored={nbSkull >= index} color={color}>
+        <SkullWrapper isColored={nbSkull >= index} color={color} key={index}>
           <ReactSVG src={Skull} />
         </SkullWrapper>
       ))}

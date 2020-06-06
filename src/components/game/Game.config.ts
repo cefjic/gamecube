@@ -1,5 +1,4 @@
-import { Difficulty } from '../board/Board.utils';
-import { LevelConfigProps } from './Game';
+import { Difficulty, LevelConfigProps } from '../board/Board.interfaces';
 
 export const EASY_LEVEL: LevelConfigProps = {
   difficulty: Difficulty.EASY,
@@ -45,3 +44,4 @@ export const NB_EASY_LEVELS = 10;
 export const NB_MEDIUM_LEVELS = 20;
 export const NB_HARD_LEVELS = 30;
 export const NB_LIFES = 10;
+export const CHANCE_HEART_APPEAR = 0.2;

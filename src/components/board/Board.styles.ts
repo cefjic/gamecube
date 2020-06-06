@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 
 import colors from '../../utils/colors';
-import { CellProps } from './Board.utils';
+import { CellProps } from './Board.interfaces';
 
 const moveTo = keyframes`
   from {
@@ -109,13 +109,33 @@ export const Cell = styled.div<CellDivProps>`
       animation: ${trapBegin} ${trapShowingTime}s linear normal forwards;
     `}
 
-
   ${({ isTrap, isFinish }) =>
     isTrap &&
     isFinish &&
     css`
       background: ${colors.red};
       animation: unset;
+    `}
+    
+  ${({ isHeart }) =>
+    isHeart &&
+    css`
+      animation: unset;
+      background: ${colors.grey};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      div {
+        display: flex;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+      }
     `}
 
   ${({ isUser }) =>
@@ -151,6 +171,36 @@ export const Cell = styled.div<CellDivProps>`
   
 `;
 
+export const HeartAnimation = keyframes`
+  0%{
+    transform: rotate(0deg);
+  }
+  25%{
+    transform: rotate(-10deg);
+  }
+  75%{
+    transform: rotate(10deg);
+  }
+  100%{
+    transform: rotate(0deg);
+  }
+`;
+
+export const HeartCell = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    animation: ${HeartAnimation} 2s linear infinite;
+    fill: ${colors.red};
+  }
+`;
+
 export const Line = styled.div`
   display: flex;
   flex-direction: column;
@@ -176,7 +226,7 @@ export const BoardStop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-indx: 2;
+  z-index: 2;
   background: rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
@@ -184,13 +234,12 @@ export const BoardStop = styled.div`
   justify-content: center;
 `;
 
-export const LevelName = styled.p`
+export const Top = styled.div`
   position: absolute;
   top: -40px;
   left: -4px;
   right: -4px;
   font-size: 24px;
-  margin: 0;
   color: ${colors.darkGrey};
   display: flex;
   align-items: center;

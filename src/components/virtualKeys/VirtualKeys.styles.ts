@@ -8,6 +8,10 @@ export const KeysInstructions = styled.div`
   flex-wrap: wrap;
   max-width: 150px;
   margin-top: 20px;
+
+  @media (min-width: 1240px) {
+    display: none;
+  }
 `;
 
 export const Key = styled.div<{ rotate?: number }>`

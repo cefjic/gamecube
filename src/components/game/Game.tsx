@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 
 import Board from '../board/Board';
-import { Difficulty, generateTraps, PositionProps } from '../board/Board.utils';
+import { LevelConfigProps, LevelProps } from '../board/Board.interfaces';
+import { generateHeartPosition, generateTraps } from '../board/Board.utils';
 import {
   EASY_LEVEL,
   EXTREME_LEVEL,
@@ -19,21 +20,6 @@ import {
   Wrapper
 } from './Game.styles';
 
-export interface LevelConfigProps {
-  difficulty: Difficulty;
-  startPosition: PositionProps;
-  exitPosition: PositionProps;
-  boardWidth: number;
-  boardHeight: number;
-  trapShowingTime: number;
-  trapsCount: number;
-}
-
-export interface LevelProps extends LevelConfigProps {
-  trapsPositions: PositionProps[];
-  name: string;
-}
-
 const buildLevel = (level: LevelConfigProps, levelNumber: number) => {
   const {
     boardHeight,
@@ -43,16 +29,23 @@ const buildLevel = (level: LevelConfigProps, levelNumber: number) => {
     trapsCount,
   } = level;
 
+  const trapsPositions = generateTraps(
+    trapsCount,
+    boardWidth,
+    boardHeight,
+    startPosition,
+    exitPosition
+  );
+
   return {
     ...level,
     name: `Level ${levelNumber}`,
-    trapsPositions: generateTraps(
-      trapsCount,
-      boardWidth,
-      boardHeight,
+    trapsPositions,
+    heartPosition: generateHeartPosition(boardWidth, boardHeight, [
       startPosition,
-      exitPosition
-    ),
+      exitPosition,
+      ...trapsPositions,
+    ]),
   };
 };
 
@@ -97,6 +90,13 @@ const Game = () => {
     }, 500);
   };
 
+  const incrementLife = () => {
+    if (lifes < NB_LIFES) {
+      setLifes(lifes + 1);
+      setLevel({ ...level, heartPosition: undefined });
+    }
+  };
+
   useEffect(() => {
     setLevel(buildLevel(getLevelConfig(levelNumber), levelNumber));
   }, [levelNumber]);
@@ -116,6 +116,7 @@ const Game = () => {
               id={levelNumber}
               onSuccessClick={nextLevel}
               onRestartClick={restartLevel}
+              onHeartStep={incrementLife}
             />
           </Fragment>
         )}

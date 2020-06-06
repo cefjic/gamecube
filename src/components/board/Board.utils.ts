@@ -1,43 +1,11 @@
+import { CHANCE_HEART_APPEAR } from '../game/Game.config';
 import { BoardProps } from './Board';
-
-export enum Difficulty {
-  EASY = "easy",
-  MEDIUM = "medium",
-  HARD = "hard",
-  EXTREME = "extreme",
-}
-
-export interface PositionProps {
-  width: number;
-  height: number;
-}
-
-export interface CellProps {
-  isTrap: boolean;
-  isWentHere: boolean;
-  isUser: boolean;
-  isExit: boolean;
-}
-
-export interface LineProps {
-  cells: CellProps[];
-}
-
-export interface GameMap {
-  lines: LineProps[];
-}
-
-export interface GameBoard {
-  difficulty: Difficulty;
-  levelName: string;
-  gameMap: GameMap;
-  hasWon: boolean;
-  hasLost: boolean;
-  needRestart: boolean;
-  width: number;
-  height: number;
-  trapsPositions: PositionProps[];
-}
+import {
+  CellProps,
+  GameBoard,
+  GameMap,
+  PositionProps
+} from './Board.interfaces';
 
 export const isInPositions = (position: PositionProps, list: PositionProps[]) =>
   list.filter((pos) => isSamePosition(pos, position)).length > 0;
@@ -121,18 +89,30 @@ export const generateTraps = (
     : generateTraps(nbTraps, width, height, startPosition, exitPosition);
 };
 
+export const generateHeartPosition = (
+  width: number,
+  height: number,
+  otherPositions: PositionProps[]
+): PositionProps | undefined => {
+  if (Math.random() <= CHANCE_HEART_APPEAR) {
+    return generateNewPosition(width, height, otherPositions);
+  }
+};
+
 export const initMap = (
   width: number,
   height: number,
   startPosition: PositionProps,
   exitPosition: PositionProps,
-  trapsPositions: PositionProps[]
+  trapsPositions: PositionProps[],
+  heartPosition?: PositionProps
 ): GameMap => {
   const cell: CellProps = {
     isTrap: false,
     isWentHere: false,
     isUser: false,
     isExit: false,
+    isHeart: false,
   };
 
   return {
@@ -153,6 +133,10 @@ export const initMap = (
 
           if (isInPositions(currentPosition, trapsPositions)) {
             return { ...cell, isTrap: true };
+          }
+
+          if (heartPosition && isSamePosition(currentPosition, heartPosition)) {
+            return { ...cell, isHeart: true };
           }
 
           return cell;
@@ -182,18 +166,36 @@ export const canMove = (
   return false;
 };
 
-export const getCurrentPosition = (gameMap: GameMap): PositionProps => {
-  let position = { width: -1, height: -1 };
+export const filterOnPosition = (
+  gameMap: GameMap,
+  filter: (cell: CellProps) => boolean
+): PositionProps | undefined => {
+  let position: PositionProps | undefined;
 
   gameMap.lines.forEach((line, width) => {
     line.cells.forEach((cell, height) => {
-      if (cell.isUser) {
+      if (filter(cell)) {
         position = { width, height };
       }
     });
   });
 
   return position;
+};
+
+export const getHeartPosition = (gameMap: GameMap): PositionProps | undefined =>
+  filterOnPosition(gameMap, (cell) => cell.isHeart);
+
+export const getCurrentPosition = (gameMap: GameMap): PositionProps =>
+  filterOnPosition(gameMap, (cell) => cell.isUser) || { width: -1, height: -1 };
+
+export const removeHeartCell = (gameMap: GameMap) => {
+  const heartPosition = getHeartPosition(gameMap);
+  if (heartPosition) {
+    const heartCell = getCell(gameMap, heartPosition);
+
+    return updateCell(gameMap, heartPosition, { ...heartCell, isHeart: false });
+  }
 };
 
 export const updateCell = (
@@ -228,6 +230,7 @@ export const moveToPosition = (
       ...newCell,
       isUser: true,
       isWentHere: false,
+      isHeart: false,
     });
   }
 
@@ -284,6 +287,7 @@ export const getInitialData = ({
   exitPosition,
   startPosition,
   trapsPositions,
+  heartPosition,
   name,
   difficulty,
 }: BoardProps) => ({
@@ -293,7 +297,8 @@ export const getInitialData = ({
     boardHeight,
     startPosition,
     exitPosition,
-    trapsPositions
+    trapsPositions,
+    heartPosition
   ),
   hasWon: false,
   hasLost: false,

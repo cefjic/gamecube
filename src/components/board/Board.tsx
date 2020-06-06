@@ -1,21 +1,23 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { ReactSVG } from 'react-svg';
 
+import Heart from '../../assets/icons/heart.svg';
 import DifficultyBar from '../difficultyBar/DifficultyBar';
-import { LevelProps } from '../game/Game';
 import Lifes from '../lifes/Lifes';
 import VirtualKeys from '../virtualKeys/VirtualKeys';
+import { GameBoard, LevelProps } from './Board.interfaces';
 import {
   BoardStop,
   BoardWrapper,
   Button,
   Cell,
-  LevelName,
+  HeartCell,
   Line,
-  MapGame
+  MapGame,
+  Top
 } from './Board.styles';
 import {
-  GameBoard,
   getCurrentPosition,
   getInitialData,
   isInPositions,
@@ -23,7 +25,8 @@ import {
   moveToDown,
   moveToLeft,
   moveToRight,
-  moveToUp
+  moveToUp,
+  removeHeartCell
 } from './Board.utils';
 
 export interface BoardProps extends LevelProps {
@@ -31,20 +34,32 @@ export interface BoardProps extends LevelProps {
   nbLifes: number;
   onSuccessClick(): void;
   onRestartClick(): void;
+  onHeartStep(): void;
+}
+
+interface StatsProps {
+  hasMove: boolean;
+  isHealed: boolean;
 }
 
 const Board: FC<BoardProps> = (props) => {
   const [board, updateBoard] = useState<GameBoard>(getInitialData(props));
-  const [hasMove, setHasMove] = useState<boolean>(false);
+  const [stats, updateStats] = useState<StatsProps>({
+    isHealed: false,
+    hasMove: false,
+  });
 
   const {
     exitPosition,
     startPosition,
     nbLifes,
     trapShowingTime,
+    heartPosition,
     onSuccessClick,
     onRestartClick,
+    onHeartStep,
   } = props;
+  const { hasMove, isHealed } = stats;
   const {
     gameMap,
     hasWon,
@@ -97,17 +112,28 @@ const Board: FC<BoardProps> = (props) => {
 
   useEffect(() => {
     if (!hasMove && !isSamePosition(startPosition, position)) {
-      setHasMove(true);
+      updateStats({ ...stats, hasMove: true });
     }
-  }, [hasMove, startPosition, position]);
+  }, [hasMove, startPosition, position, stats]);
+
+  useEffect(() => {
+    if (!isHealed && heartPosition && isSamePosition(heartPosition, position)) {
+      onHeartStep();
+      updateStats({ ...stats, isHealed: true });
+      const newMap = removeHeartCell(gameMap);
+      if (newMap) {
+        updateBoard({ ...board, gameMap: newMap });
+      }
+    }
+  }, [heartPosition, position, onHeartStep, gameMap, board, isHealed, stats]);
 
   return (
     <Fragment>
       <BoardWrapper>
-        <LevelName>
+        <Top>
           <span>{levelName}</span>
           <DifficultyBar difficulty={difficulty} />
-        </LevelName>
+        </Top>
         {hasWon && (
           <BoardStop>
             <span>You win !</span>
@@ -142,7 +168,15 @@ const Board: FC<BoardProps> = (props) => {
                       startPosition
                     )
                   }
-                />
+                >
+                  {cell.isHeart && (
+                    <Fragment>
+                      <HeartCell>
+                        <ReactSVG src={Heart} />
+                      </HeartCell>
+                    </Fragment>
+                  )}
+                </Cell>
               ))}
             </Line>
           ))}
