@@ -28,7 +28,7 @@ export const HARD_LEVEL: LevelConfigProps = {
   boardWidth: 15,
   boardHeight: 15,
   trapShowingTime: 4,
-  trapsCount: 55,
+  trapsCount: 70,
 };
 
 export const EXTREME_LEVEL: LevelConfigProps = {
@@ -41,7 +41,7 @@ export const EXTREME_LEVEL: LevelConfigProps = {
   trapsCount: 90,
 };
 
-export const NB_EASY_LEVELS = 5;
-export const NB_MEDIUM_LEVELS = 30;
+export const NB_EASY_LEVELS = 10;
+export const NB_MEDIUM_LEVELS = 20;
 export const NB_HARD_LEVELS = 30;
 export const NB_LIFES = 10;

@@ -7,4 +7,8 @@ export default {
   darkRed: "#c62828",
   purple: "#7986cb",
   teal: "#4db6ac",
+  green: "#66bb6a",
+  lime: "#d4e157",
+  orange: "#ffa726",
+  deepRed: "#ef5350",
 };

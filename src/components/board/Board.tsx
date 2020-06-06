@@ -103,11 +103,11 @@ const Board: FC<BoardProps> = (props) => {
 
   return (
     <Fragment>
-      <LevelName>
-        <span>{levelName}</span>
-        <DifficultyBar difficulty={difficulty} />
-      </LevelName>
       <BoardWrapper>
+        <LevelName>
+          <span>{levelName}</span>
+          <DifficultyBar difficulty={difficulty} />
+        </LevelName>
         {hasWon && (
           <BoardStop>
             <span>You win !</span>

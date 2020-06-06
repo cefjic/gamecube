@@ -167,6 +167,7 @@ export const BoardWrapper = styled.div`
   border: 4px solid ${colors.lightGrey};
   border-radius: 10px;
   padding: 1px;
+  margin-top: 40px;
 `;
 
 export const BoardStop = styled.div`
@@ -184,12 +185,20 @@ export const BoardStop = styled.div`
 `;
 
 export const LevelName = styled.p`
+  position: absolute;
+  top: -40px;
+  left: -4px;
+  right: -4px;
   font-size: 24px;
+  margin: 0;
   color: ${colors.darkGrey};
-  margin: 0 0 8px;
-  background: #f4f5f6;
-  box-shadow: 0px 0px 40px #f4f5f6;
-  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > span {
+    flex: 1;
+  }
 `;
 
 export const Button = styled.button`
